@@ -1,0 +1,330 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Espace de travail</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js"></script>
+<style>
+:root{--bg:#0f1115;--fg:#e8eaf0;--mut:#8b91a0;--card:#1a1d24;--line:#2a2e38;--accent:#6ea8fe}
+@media(prefers-color-scheme:light){:root{--bg:#f4f5f8;--fg:#1a1d24;--mut:#667;--card:#fff;--line:#dde;--accent:#2563eb}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font-family:system-ui,sans-serif}
+header{display:flex;gap:12px;align-items:center;padding:14px 20px;border-bottom:1px solid var(--line)}
+header a{color:var(--mut);text-decoration:none}header a:hover{color:var(--fg)}header .sp{flex:1}
+main{max-width:1000px;margin:0 auto;padding:20px}
+h1{font-weight:600;margin:.2em 0 .6em}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;color:var(--fg);text-decoration:none;display:block}
+a.card:hover{border-color:var(--accent)}.big{padding:56px 16px;text-align:center;font-size:1.5rem}
+.mut{color:var(--mut);font-size:.9rem}.tabs{display:flex;gap:6px;border-bottom:1px solid var(--line);margin-bottom:16px;flex-wrap:wrap}
+.tabs button{background:none;border:0;color:var(--mut);padding:10px 14px;cursor:pointer;font-size:1rem;border-bottom:2px solid transparent}
+.tabs button.on{color:var(--fg);border-color:var(--accent)}
+ul.tree{list-style:none;padding-left:18px;margin:2px 0}ul.tree.root{padding-left:0}
+.tree summary,.tree li>span,.tree li>a{cursor:pointer;padding:2px 0;color:var(--fg);text-decoration:none;display:inline-block}
+.tree a:hover,.tree summary:hover{color:var(--accent)}
+button.b,a.b{background:var(--accent);color:#fff;border:0;border-radius:8px;padding:8px 14px;cursor:pointer;text-decoration:none;font-size:.95rem}
+button.g{background:var(--card);color:var(--fg);border:1px solid var(--line)}
+textarea{width:100%;min-height:55vh;background:var(--card);color:var(--fg);border:1px solid var(--line);border-radius:10px;padding:12px;font:14px/1.5 ui-monospace,monospace}
+.md{line-height:1.6}.md pre{background:var(--card);padding:12px;border-radius:8px;overflow:auto}.md code{font-family:ui-monospace,monospace}
+.md img{max-width:100%}table{border-collapse:collapse}td,th{border:1px solid var(--line);padding:6px 10px}
+.gris{background:#2d2f34;border:1px solid #3d4047;border-radius:18px;padding:22px;color:#e8eaf0}
+@media(prefers-color-scheme:light){.gris{background:#d9dbe0;border-color:#c3c6cd;color:#1a1d24}}
+.gris h3{margin:.2em 0 .8em}.gris .mut{color:inherit;opacity:.65}
+.liens{display:flex;flex-wrap:wrap;gap:14px;margin-bottom:28px;align-items:stretch}
+.lien{position:relative;background:rgba(255,255,255,.55);border:1px solid rgba(127,127,127,.3);border-radius:16px;min-width:200px;transition:border-color .15s,transform .15s}
+.lien:hover{border-color:var(--accent);transform:translateY(-2px)}
+.lien a{display:flex;flex-direction:column;gap:2px;padding:16px 40px 16px 20px;color:inherit;text-decoration:none}
+.lien a b{font-size:1.2rem}.lien a small{opacity:.6}
+.lien button{position:absolute;top:6px;right:8px;background:none;border:0;color:inherit;opacity:.45;cursor:pointer;font-size:1.1rem}.lien button:hover{opacity:1}
+@media(prefers-color-scheme:dark){.lien{background:rgba(255,255,255,.08)}}
+#al{border-radius:16px;padding:0 24px;font-size:1.05rem;border-style:dashed;min-height:70px}
+.case{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:22px 16px;color:inherit;text-decoration:none;display:block}
+.case:hover{border-color:var(--accent)}
+.gcours{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:16px}
+.cc{--c:#6ea8fe;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;aspect-ratio:1/1;max-height:220px;
+ border-radius:18px;text-decoration:none;color:inherit;border:2px solid transparent;
+ background:linear-gradient(160deg,color-mix(in srgb,var(--c) 38%,transparent),color-mix(in srgb,var(--c) 10%,transparent));transition:transform .15s,border-color .15s}
+.cc:hover{transform:translateY(-3px);border-color:var(--c)}
+.cc .ic{width:96px;height:96px;border-radius:22px;background:#fff;display:grid;place-items:center;box-shadow:0 4px 14px rgba(0,0,0,.25)}
+.cc .ic img{max-width:70px;max-height:70px}.cc .ic span{font-size:44px}
+.cc b{font-size:1.15rem;text-transform:capitalize;letter-spacing:.3px}
+@media(max-width:480px){.gcours{grid-template-columns:repeat(2,1fr);gap:10px}.cc .ic{width:72px;height:72px}.cc .ic img{max-width:52px;max-height:52px}}
+.sep{border:0;height:2px;width:60%;margin:30px auto 22px;border-radius:2px;background:linear-gradient(90deg,transparent,#fff,transparent)}
+.outils{display:flex;flex-wrap:wrap;gap:18px;justify-content:center}
+.outil{display:flex;align-items:center;gap:16px;padding:16px 26px 16px 18px;min-width:240px;border-radius:16px;text-decoration:none;color:inherit;
+ border:1px dashed currentColor;border-color:rgba(127,127,127,.55);background:transparent;transition:background .15s,border-color .15s}
+.outil:hover{background:rgba(127,127,127,.15);border-style:solid;border-color:var(--accent)}
+.outil img{width:54px;height:54px}.outil b{display:block;font-size:1.2rem}.outil small{opacity:.65}.outil .fl{margin-left:6px;opacity:.5}
+.two{display:grid;grid-template-columns:260px 1fr;gap:20px}@media(max-width:700px){.two{grid-template-columns:1fr}}
+/* agenda (page Hers, sous les outils) */
+:root{color-scheme:light dark}
+.ag-h{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.ag-h h2{margin:0 auto 0 0;font-size:1.5rem;font-weight:600;text-transform:capitalize}
+.ag-h .b{padding:9px 14px}.ag-h .nav{min-width:42px;font-size:1.1rem;padding:7px 0}
+.ag{display:grid;grid-template-columns:290px 1fr;gap:18px;align-items:start}
+@media(max-width:820px){.ag{grid-template-columns:1fr}}
+.av{display:flex;flex-direction:column;gap:8px;max-height:620px;overflow:auto;padding-right:2px}
+.av h4,.fm .lbl{margin:0;font-size:.74rem;text-transform:uppercase;letter-spacing:.09em;opacity:.6;font-weight:600}
+.av .vide{padding:22px 14px;text-align:center;border:1px dashed rgba(127,127,127,.5);border-radius:12px;opacity:.75;line-height:1.5}
+.ev{--c:#94a3b8;display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;background:rgba(127,127,127,.13);border-left:4px solid var(--c);cursor:pointer;transition:background .12s}
+.ev:hover{background:rgba(127,127,127,.22)}.ev.fait .t b{text-decoration:line-through;opacity:.55}
+.ev .t{flex:1;min-width:0}.ev .t b{display:block;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ev .t small{opacity:.65;text-transform:capitalize}
+.ck{flex:none;width:24px;height:24px;border-radius:50%;border:2px solid var(--c);background:none;cursor:pointer;padding:0;color:#fff;font-size:13px;line-height:1;display:grid;place-items:center}
+.ck:hover::after,.ck.on::after{content:'✓'}.ck:hover,.ck.on{background:var(--c)}
+.dl{flex:none;font-size:.76rem;font-weight:700;padding:3px 9px;border-radius:99px;background:rgba(127,127,127,.2);white-space:nowrap}
+.dl.r{background:#dc2626;color:#fff}.dl.o{background:#f59e0b;color:#1a1d24}
+.cal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}
+.cal .js{font-size:.74rem;text-transform:uppercase;letter-spacing:.08em;opacity:.55;text-align:center;padding:2px 0 4px;font-weight:600}
+.jr{position:relative;min-height:96px;border-radius:10px;padding:5px;background:rgba(127,127,127,.09);border:1px solid transparent;cursor:pointer;
+ display:flex;flex-direction:column;gap:4px;min-width:0;transition:border-color .12s,background .12s}
+.jr:hover{border-color:rgba(127,127,127,.55)}.jr.ho{opacity:.38}.jr.pa:not(.auj){background:rgba(127,127,127,.04)}.jr.pa .n{opacity:.5}
+.jr .n{font-size:.85rem;font-weight:600;width:26px;height:26px;display:grid;place-items:center;border-radius:50%}
+.jr.auj{border-color:var(--accent)}.jr.auj .n{background:var(--accent);color:#fff}
+.jr.drop{background:color-mix(in srgb,var(--accent) 28%,transparent);border-color:var(--accent)}
+.jr .add{position:absolute;top:5px;right:5px;width:24px;height:24px;border-radius:50%;border:0;background:var(--accent);color:#fff;font-size:16px;line-height:1;cursor:pointer;opacity:0;transition:opacity .12s}
+.jr:hover .add{opacity:1}
+.jr .cs{display:flex;flex-direction:column;gap:3px;min-width:0}
+.chip{--c:#94a3b8;font-size:.76rem;line-height:1.3;padding:2px 6px;border-radius:6px;background:color-mix(in srgb,var(--c) 34%,transparent);border-left:3px solid var(--c);
+ overflow:hidden;overflow-wrap:anywhere;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;cursor:grab}
+.chip:hover{background:color-mix(in srgb,var(--c) 55%,transparent)}.chip.fait{opacity:.45;text-decoration:line-through}
+@media(max-width:600px){.ag-h h2{flex-basis:100%;margin-bottom:4px}.ag-h #agN{margin-left:auto}.jr{min-height:54px;padding:4px;align-items:center}.jr .add{display:none}
+ .jr .cs{flex-direction:row;flex-wrap:wrap;justify-content:center;gap:3px}
+ .chip{font-size:0;display:block;width:8px;height:8px;padding:0;border:0;border-radius:50%;background:var(--c);pointer-events:none}.cal{gap:3px}}
+dialog{background:var(--card);color:var(--fg);border:1px solid var(--line);border-radius:18px;padding:0;width:min(540px,calc(100vw - 24px));box-shadow:0 24px 70px rgba(0,0,0,.45)}
+dialog::backdrop{background:rgba(0,0,0,.55)}
+.fm{display:flex;flex-direction:column;gap:14px;padding:20px}
+.fm-h{display:flex;align-items:center;gap:8px}.fm-h b{flex:1;font-size:1.25rem;text-transform:capitalize}
+.x{background:none;border:0;color:inherit;font-size:1.6rem;line-height:1;cursor:pointer;opacity:.55}.x:hover{opacity:1}
+.in{width:100%;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-size:1.05rem;font-family:inherit}
+.in:focus{outline:2px solid var(--accent);border-color:transparent}
+.seg,.chips,.dt{display:flex;flex-wrap:wrap;gap:6px}
+.seg button,.chips button{--c:var(--accent);background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:99px;padding:8px 13px;cursor:pointer;font-size:.93rem;text-transform:capitalize}
+.seg button.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.chips button{border-left:5px solid var(--c)}.chips button.on{background:color-mix(in srgb,var(--c) 42%,transparent);border-color:var(--c);font-weight:600}
+.dt .in{flex:1 1 170px;width:auto}.dt .b{padding:8px 12px}
+.fm-a{display:flex;gap:8px;align-items:center;margin-top:4px}.fm-a .sp{flex:1}.fm-a .b{padding:11px 20px;font-size:1rem}
+button.del{color:#ef4444}
+#toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,150%);opacity:0;background:#111318;color:#fff;padding:12px 18px;border-radius:12px;display:flex;gap:14px;align-items:center;
+ transition:transform .2s,opacity .2s;z-index:10;box-shadow:0 10px 30px rgba(0,0,0,.4);max-width:calc(100vw - 32px)}
+#toast.on{transform:translate(-50%,0);opacity:1}#toast button{background:none;border:0;color:#6ea8fe;font-weight:700;cursor:pointer;font-size:.95rem}
+</style></head><body>
+<header><a href="#/">🏠 Accueil</a><span id="fil" class="mut"></span><span class="sp"></span>
+<a id="lcode" href="#">💻 Code</a><a id="lcloud" href="#">☁️ Fichiers</a></header>
+<main id="app"></main>
+<script>
+const $=s=>document.querySelector(s),app=$('#app');
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const prod=location.protocol==='https:',base=location.hostname.split('.').slice(-2).join('.');
+const CODE=prod?'https://code.'+base:'http://'+location.hostname+':8443',CLOUD=prod?'https://cloud.'+base:'http://'+location.hostname+':8081';
+const TERM=prod?'https://term.'+base:'http://'+location.hostname+':8083',IDE=prod?'https://ide.'+base:'http://'+location.hostname+':8765';
+$('#lcode').href=CODE;$('#lcloud').href=CLOUD;
+const api=async u=>(await fetch(u)).json();
+const taille=n=>n>1e9?(n/1e9).toFixed(1)+' Go':n>1e6?(n/1e6).toFixed(1)+' Mo':n>1e3?(n/1e3).toFixed(0)+' Ko':n+' o';
+const md=t=>DOMPurify.sanitize(marked.parse(t));
+const fu=(nom,ch,dl)=>`/api/fichier?nom=${encodeURIComponent(nom)}&chemin=${encodeURIComponent(ch)}${dl?'&dl=1':''}`;
+
+function treeHtml(ns,nom,pre='',cb='ouvrir'){return '<ul class="tree'+(pre?'':' root')+'">'+ns.map(n=>{
+ const p=pre+n.nom;
+ if(n.type==='dossier')return `<li><details><summary>📁 ${esc(n.nom)}</summary>${treeHtml(n.enfants||[],nom,p+'/',cb)}</details></li>`;
+ if(n.type==='plus')return '<li class="mut">… (tronqué)</li>';
+ const ismd=/\.md$/i.test(n.nom);
+ return `<li><a href="#" data-f="${esc(p)}">${ismd?'📝':'📄'} ${esc(n.nom)}</a></li>`}).join('')+'</ul>'}
+
+async function accueil(){$('#fil').textContent='';
+ app.innerHTML=`<h1>Espace de travail</h1><div class="grid"><a class="card big" href="#/build">🛠️ Build</a><a class="card big" href="#/hers">📚 Hers</a></div>`}
+
+async function build(){$('#fil').textContent='/ Build';
+ const ps=await api('/api/projets');
+ app.innerHTML='<h1>Projets</h1><div class="grid">'+ps.map(p=>`<a class="card" href="#/projet/${encodeURIComponent(p.nom)}"><b>${esc(p.nom)}</b><p class="mut">${esc(p.description)||'Pas de description'}</p><div class="mut">${p.branche?'⎇ '+esc(p.branche)+(p.dernier?' · '+esc(p.dernier):'')+(p.modifies?' · '+p.modifies+' modif.':''):'pas de git'}</div></a>`).join('')+'</div>'}
+
+// affichage / édition d'un fichier dans un conteneur
+async function voirFichier(nom,ch,zone){
+ const url=fu(nom,ch);
+ if(/\.md$/i.test(ch)){const {contenu}=await api('/api/note?nom='+encodeURIComponent(nom)+'&chemin='+encodeURIComponent(ch));
+  zone.innerHTML=`<div style="display:flex;gap:8px;align-items:center"><b>${esc(ch)}</b><span style="flex:1"></span><button class="b g" id="ed">✏️ Modifier</button></div><div class="md">${md(contenu)}</div>`;
+  $('#ed').onclick=()=>{zone.innerHTML=`<div style="display:flex;gap:8px;align-items:center;margin-bottom:8px"><b>${esc(ch)}</b><span style="flex:1"></span><button class="b g" id="an">Annuler</button><button class="b" id="sv">💾 Enregistrer</button></div><textarea id="ta"></textarea>`;
+   $('#ta').value=contenu;$('#an').onclick=()=>voirFichier(nom,ch,zone);
+   $('#sv').onclick=async()=>{const r=await fetch('/api/note',{method:'PUT',body:JSON.stringify({nom,chemin:ch,contenu:$('#ta').value})});r.ok?voirFichier(nom,ch,zone):alert('Échec de l\'enregistrement')}}}
+ else if(/\.(png|jpe?g|gif|webp|svg)$/i.test(ch))zone.innerHTML=`<b>${esc(ch)}</b><p><img style="max-width:100%" src="${url}"></p>`;
+ else if(/\.pdf$/i.test(ch))zone.innerHTML=`<b>${esc(ch)}</b> <a class="b" href="${fu(nom,ch,1)}">Télécharger</a><iframe src="${url}" style="width:100%;height:75vh;border:1px solid var(--line);margin-top:10px"></iframe>`;
+ else zone.innerHTML=`<b>${esc(ch)}</b><p><a class="b" href="${url}" target="_blank">Ouvrir</a> <a class="b g" href="${fu(nom,ch,1)}">Télécharger</a></p>`}
+
+function nouvelleNote(nom,zone,dossier=''){const n=prompt('Nom de la note (ex: idees.md)');if(!n)return;
+ const ch=dossier+(n.endsWith('.md')?n:n+'.md');
+ fetch('/api/note',{method:'PUT',body:JSON.stringify({nom,chemin:ch,contenu:'# '+n.replace(/\.md$/,'')+'\n\n'})}).then(()=>location.reload())}
+
+async function projet(nom){$('#fil').textContent='/ Build / '+nom;
+ const d=await api('/api/projet?nom='+encodeURIComponent(nom));
+ if(d.erreur){app.innerHTML='<h1>Introuvable</h1>';return}
+ const g=d.git,s=d.stats;
+ const liens=[`<a class="card" target="_blank" href="${CODE}/?folder=/workspace/${encodeURIComponent(nom)}">💻 Ouvrir dans Code</a>`,
+  `<a class="card" target="_blank" href="${CLOUD}/apps/files/?dir=/Workspace/${encodeURIComponent(nom)}">☁️ Ouvrir dans Fichiers</a>`];
+ if(g&&g.remote)liens.push(`<a class="card" target="_blank" href="${esc(g.remote)}">🐙 Dépôt GitHub</a>`);
+ const T={apercu:`<p>${esc(d.description)||'<span class="mut">Pas de description</span>'}</p>
+  <div class="grid"><div class="card"><b>${s.fichiers}</b><div class="mut">fichiers</div></div><div class="card"><b>${s.dossiers}</b><div class="mut">dossiers</div></div><div class="card"><b>${taille(s.taille)}</b><div class="mut">taille</div></div></div>
+  <p class="mut">Extensions : ${s.extensions.map(e=>esc(e[0])+' ('+e[1]+')').join(', ')}</p><h3>Liens clés</h3><div class="grid">${liens.join('')}</div>`,
+  fichiers:`<div class="two"><div>${treeHtml(d.arbre,nom)}</div><div id="vue" class="mut">Choisis un fichier.</div></div>`,
+  notes:`<p><button class="b" id="nn">+ Nouvelle note</button></p><div class="two"><div>${d.notes.map(n=>`<div><a href="#" data-f="${esc(n)}">📝 ${esc(n)}</a></div>`).join('')||'<span class="mut">Aucune note .md</span>'}</div><div id="vue" class="mut"></div></div>`,
+  git:g?`<p>⎇ <b>${esc(g.branche)}</b> · ${g.modifies} fichier(s) modifié(s)${g.remote?' · <a href="'+esc(g.remote)+'" target="_blank">'+esc(g.remote)+'</a>':''}</p>`+g.commits.map(c=>`<div class="card" style="margin-bottom:8px"><code>${esc(c.hash)}</code> ${esc(c.message)}<div class="mut">${esc(c.auteur)} · ${esc(c.date)}</div></div>`).join(''):'<p class="mut">Ce projet n\'est pas un dépôt git.</p>'};
+ const noms={apercu:'Aperçu',fichiers:'Fichiers',notes:'Notes',git:'Git'};
+ app.innerHTML=`<h1>${esc(nom)}</h1><div class="tabs">${Object.keys(noms).map(k=>`<button data-t="${k}">${noms[k]}</button>`).join('')}</div><div id="onglet"></div>`;
+ const montre=t=>{document.querySelectorAll('.tabs button').forEach(b=>b.classList.toggle('on',b.dataset.t===t));$('#onglet').innerHTML=T[t];
+  $('#onglet').querySelectorAll('[data-f]').forEach(a=>a.onclick=e=>{e.preventDefault();voirFichier(nom,a.dataset.f,$('#vue'))});
+  if($('#nn'))$('#nn').onclick=()=>nouvelleNote(nom,$('#vue'))};
+ document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>montre(b.dataset.t));montre('apercu')}
+
+const nbF=ns=>(ns||[]).reduce((t,n)=>t+(n.type==='fichier'?1:n.type==='dossier'?nbF(n.enfants):0),0);
+
+const VISUEL={java:['java-svgrepo-com.svg','#ea580c'],c:['C_Programming_Language.svg','#3949ab'],web:['javascript-svgrepo-com.svg','#eab308'],
+ methode:['pseudo-code.svg','#14b8a6'],os:['linux-svgrepo-com.svg','#f59e0b'],reseau:['network-backup-svgrepo-com.svg','#0ea5e9'],
+ architecture:['hardware-svgrepo-com.svg','#64748b'],math:['mathematics.svg','#8b5cf6'],economie:['economie.svg','#16a34a'],anglais:['US-UK_Flag.svg','#e11d48']};
+// cases de liens (page Hers et pages des cours)
+// lien saisi -> url : domaine nu => https:// ; chemin de fichier (C:\..., \\pc\partage, /...) => file://
+function versUrl(u){u=u.trim().replace(/^"(.*)"$/,'$1');
+ if(/^(https?|file):\/\//i.test(u))return u;
+ if(/^[a-z]:[\\/]/i.test(u))return 'file:///'+encodeURI(u.replace(/\\/g,'/'));
+ if(/^\\\\/.test(u))return 'file:'+encodeURI(u.replace(/\\/g,'/'));
+ if(/^\//.test(u))return 'file://'+encodeURI(u);
+ return 'https://'+u}
+const estFichier=u=>/^file:/i.test(u);
+function cheminLocal(u){let c=decodeURI(u).replace(/^file:\/*/i,'');return /^[a-z]:/i.test(c)?c.replace(/\//g,'\\'):(/^file:\/\/[^/]/i.test(u)?'\\\\'+c.replace(/\//g,'\\'):'/'+c)}
+const domaine=u=>u.replace(/^https?:\/\/(www\.)?/,'').split('/')[0];
+function liensHtml(liens){return `<div class="liens" id="liens">${liens.map((l,i)=>`<span class="lien"><a href="${esc(l.url)}" ${estFichier(l.url)?`data-f="${i}"`:''} target="_blank" rel="noopener"><b>${esc(l.titre)}</b><small>${estFichier(l.url)?'💻 '+esc(cheminLocal(l.url)):esc(domaine(l.url))+' ↗'}</small></a><button title="Retirer" data-x="${i}">×</button></span>`).join('')||'<span class="mut">Aucun lien pour l\'instant.</span>'}<button class="b g" id="al">+ Ajouter</button></div>`}
+function brancherLiens(liens,url,recharger){
+ const sauve=async l=>{await fetch(url,{method:'PUT',body:JSON.stringify(l)});recharger()};
+ document.querySelectorAll('[data-x]').forEach(b=>b.onclick=()=>sauve(liens.filter((_,i)=>i!=b.dataset.x)));
+ // le navigateur refuse d'ouvrir file:// depuis une page web : on copie le chemin à coller dans l'explorateur du PC
+ document.querySelectorAll('[data-f]').forEach(a=>a.onclick=e=>{e.preventDefault();const c=cheminLocal(a.getAttribute('href'));(navigator.clipboard?navigator.clipboard.writeText(c):Promise.reject()).then(()=>alert('Chemin copié :\n'+c+'\n\nColle-le dans l\'explorateur de fichiers du PC concerné.'),()=>prompt('Copie ce chemin :',c))});
+ $('#al').onclick=()=>{const s=prompt('Site (moodle.hers.be, https://...) ou chemin de fichier (C:\\Users\\..., /home/...)');if(!s||!s.trim())return;const u=versUrl(s);const t=prompt('Titre du lien',estFichier(u)?cheminLocal(u).split(/[\\/]/).filter(Boolean).pop():domaine(u));if(t)sauve([...liens,{titre:t,url:u}])}}
+
+async function hers(){$('#fil').textContent='/ Hers';
+ const [d,liens,ag]=await Promise.all([api('/api/hers'),api('/api/liens'),api('/api/agenda').catch(()=>[])]);
+ if(d.erreur){app.innerHTML='<h1>Hers</h1><p class="mut">Dossier hers introuvable.</p>';return}
+ const cours=d.arbre.filter(n=>n.type==='dossier'&&n.nom!=='divers');
+ app.innerHTML=`<h1 style="display:flex;align-items:center;gap:12px"><img alt="" src="${fu('hers','divers/8595.png')}" style="height:64px;background:#fff;border-radius:12px;padding:4px 8px">Hers</h1><div class="gris">
+  ${liensHtml(liens)}<hr class="sep" style="margin-top:4px">
+  <div class="gcours">${cours.map(n=>{const v=VISUEL[n.nom];
+   return `<a class="cc" style="--c:${v?v[1]:'#6ea8fe'}" href="#/hers/${encodeURIComponent(n.nom)}"><div class="ic">${v?`<img alt="" src="${fu('hers','divers/'+v[0])}">`:'<span>📁</span>'}</div><b>${esc(n.nom)}</b></a>`}).join('')}</div>
+  <hr class="sep"><div class="outils">
+   <a class="outil" target="_blank" href="${CODE}/?folder=/workspace/hers"><img alt="" src="${fu('hers','divers/Visual_Studio_Code_1.35_icon.svg')}"><span><b>Code</b><small>éditeur + terminal</small></span><span class="fl">↗</span></a>
+   <a class="outil" target="_blank" href="${CLOUD}/apps/files/?dir=/Workspace/hers"><img alt="" src="${fu('hers','divers/cloud-svgrepo-com.svg')}"><span><b>Fichiers</b><small>Nextcloud</small></span><span class="fl">↗</span></a>
+   <a class="outil" target="_blank" href="${TERM}/"><img alt="" src="${fu('hers','divers/bash-icon-svgrepo-com.svg')}"><span><b>Terminal</b><small>bash</small></span><span class="fl">↗</span></a>
+  </div><hr class="sep"><div id="agenda"></div></div>`;
+ brancherLiens(liens,'/api/liens',hers);
+ AG.liste=Array.isArray(ag)?ag:[];AG.cours=cours.map(n=>n.nom);agenda()}
+
+// ---- agenda : devoirs, tests, examens (stocké dans hers/.agenda.json, liste complète renvoyée en PUT)
+const TYPES={devoir:['📝','Devoir'],test:['✏️','Test'],examen:['🎓','Examen'],autre:['📌','Autre']};
+const JOURS=['lun','mar','mer','jeu','ven','sam','dim'];
+const AG={liste:[],cours:[],mois:null,type:'devoir',coursPris:'',jour:null};
+const iso=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+const versDate=s=>{const [a,m,j]=s.split('-');return new Date(a,m-1,j)};
+const aujourdhui=()=>iso(new Date());
+const plusJours=n=>{const d=new Date();d.setDate(d.getDate()+n);return iso(d)};
+const ecart=s=>Math.round((versDate(s)-versDate(aujourdhui()))/864e5);
+const dateLongue=s=>versDate(s).toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
+const couleur=c=>VISUEL[c]?VISUEL[c][1]:'#94a3b8';
+const trie=l=>[...l].sort((a,b)=>a.date.localeCompare(b.date)||a.fait-b.fait);
+function delai(s){const n=ecart(s);
+ return n<0?['En retard','r']:n===0?['Aujourd\'hui','r']:n===1?['Demain','r']:n<=3?['Dans '+n+' j','o']:n<=13?[versDate(s).toLocaleDateString('fr-FR',{weekday:'short',day:'numeric'}),'']:[versDate(s).toLocaleDateString('fr-FR',{day:'numeric',month:'short'}),'']}
+const evHtml=(e,avecDelai)=>{const [t,c]=delai(e.date);
+ return `<div class="ev${e.fait?' fait':''}" style="--c:${couleur(e.cours)}" data-ed="${esc(e.id)}"><button class="ck${e.fait?' on':''}" data-ck="${esc(e.id)}" title="${e.fait?'Remettre à faire':'Marquer comme fait'}"></button>
+  <div class="t"><b>${TYPES[e.type][0]} ${esc(e.titre)}</b><small>${esc(e.cours||'—')} · ${TYPES[e.type][1]}</small></div>${avecDelai?`<span class="dl ${c}">${t}</span>`:''}</div>`};
+
+async function sauverAgenda(){
+ const r=await fetch('/api/agenda',{method:'PUT',body:JSON.stringify(AG.liste)}).catch(()=>null);
+ if(!r||!r.ok)alert('Échec de l\'enregistrement de l\'agenda')}
+function majAgenda(){sauverAgenda();agenda();if(AG.jour&&$('#dlg').open)jourDlg(AG.jour)}
+function toast(msg,annuler){let t=$('#toast');if(!t){t=document.createElement('div');t.id='toast';document.body.append(t)}
+ t.innerHTML='<span>'+esc(msg)+'</span>'+(annuler?'<button>Annuler</button>':'');t.className='on';clearTimeout(t._t);t._t=setTimeout(()=>t.className='',5000);
+ if(annuler)t.querySelector('button').onclick=()=>{t.className='';annuler()}}
+function basculer(id){const e=AG.liste.find(x=>x.id===id);if(!e)return;e.fait=!e.fait;majAgenda();
+ if(e.fait)toast('✓ « '+e.titre+' » fait',()=>{e.fait=false;majAgenda()})}
+// clics sur les éléments d'une zone (liste, case du calendrier, fenêtre d'un jour)
+function brancherEv(zone){
+ zone.querySelectorAll('[data-ck]').forEach(b=>b.onclick=ev=>{ev.stopPropagation();basculer(b.dataset.ck)});
+ zone.querySelectorAll('[data-ed]').forEach(b=>b.onclick=ev=>{ev.stopPropagation();const e=AG.liste.find(x=>x.id===b.dataset.ed);if(e)editer(e)})}
+
+function agenda(){const z=$('#agenda');if(!z)return;
+ const auj=aujourdhui(),m=AG.mois||(AG.mois=new Date(new Date().getFullYear(),new Date().getMonth(),1));
+ const avenir=trie(AG.liste.filter(e=>!e.fait));
+ const debut=new Date(m);debut.setDate(1-(m.getDay()+6)%7);
+ const nbCases=Math.ceil(((m.getDay()+6)%7+new Date(m.getFullYear(),m.getMonth()+1,0).getDate())/7)*7;
+ let cases='';
+ for(let i=0;i<nbCases;i++){const d=new Date(debut);d.setDate(debut.getDate()+i);const s=iso(d);
+  const evs=trie(AG.liste.filter(e=>e.date===s));
+  cases+=`<div class="jr${d.getMonth()!==m.getMonth()?' ho':''}${s===auj?' auj':''}${s<auj?' pa':''}" data-j="${s}"><span class="n">${d.getDate()}</span><button class="add" data-aj="${s}" title="Ajouter ce jour">+</button>
+   <div class="cs">${evs.map(e=>`<div class="chip${e.fait?' fait':''}" draggable="true" style="--c:${couleur(e.cours)}" data-ed="${esc(e.id)}" title="${esc(TYPES[e.type][1]+' · '+(e.cours||'')+' · '+e.titre)}">${TYPES[e.type][0]} ${esc(e.titre)}</div>`).join('')}</div></div>`}
+ z.innerHTML=`<div class="ag-h"><h2>${m.toLocaleDateString('fr-FR',{month:'long',year:'numeric'})}</h2>
+  <button class="b g nav" id="agP" title="Mois précédent">‹</button><button class="b g" id="agA">Aujourd'hui</button><button class="b g nav" id="agS" title="Mois suivant">›</button>
+  <button class="b" id="agN">+ Ajouter</button></div>
+  <div class="ag"><div class="av"><h4>À venir</h4>${avenir.map(e=>evHtml(e,true)).join('')||'<div class="vide">Rien de prévu 🎉<br><small>Clique sur un jour du calendrier pour ajouter un devoir ou un test.</small></div>'}</div>
+  <div class="cal">${JOURS.map(j=>`<div class="js">${j}</div>`).join('')}${cases}</div></div>`;
+ const mois=k=>{AG.mois=new Date(m.getFullYear(),m.getMonth()+k,1);agenda()};
+ $('#agP').onclick=()=>mois(-1);$('#agS').onclick=()=>mois(1);$('#agA').onclick=()=>{AG.mois=null;agenda()};
+ $('#agN').onclick=()=>editer({date:auj});
+ brancherEv(z);
+ z.querySelectorAll('[data-aj]').forEach(b=>b.onclick=ev=>{ev.stopPropagation();editer({date:b.dataset.aj})});
+ z.querySelectorAll('.jr').forEach(c=>{const s=c.dataset.j;
+  // jour vide -> ajout direct ; jour avec des éléments -> fenêtre du jour (sur mobile, les pastilles ne sont pas cliquables)
+  c.onclick=()=>AG.liste.some(e=>e.date===s)?jourDlg(s):editer({date:s});
+  c.ondragover=ev=>{ev.preventDefault();c.classList.add('drop')};c.ondragleave=()=>c.classList.remove('drop');
+  c.ondrop=ev=>{ev.preventDefault();const e=AG.liste.find(x=>x.id===ev.dataTransfer.getData('text/plain'));if(e&&e.date!==s){e.date=s;majAgenda()}else c.classList.remove('drop')}});
+ z.querySelectorAll('.chip').forEach(c=>c.ondragstart=ev=>ev.dataTransfer.setData('text/plain',c.dataset.ed))}
+
+function dlg(){let d=$('#dlg');if(!d){d=document.createElement('dialog');d.id='dlg';document.body.append(d);
+  d.onclick=e=>{if(e.target===d)d.close()};d.onclose=()=>AG.jour=null}
+ return d}
+function jourDlg(s){const d=dlg();AG.jour=s;
+ const evs=trie(AG.liste.filter(e=>e.date===s));
+ d.innerHTML=`<div class="fm"><div class="fm-h"><b>${dateLongue(s)}</b><button class="x" data-close>×</button></div>
+  ${evs.map(e=>evHtml(e,false)).join('')||'<div class="mut">Rien ce jour-là.</div>'}<button class="b" id="jA">+ Ajouter ce jour</button></div>`;
+ brancherEv(d);d.querySelector('[data-close]').onclick=()=>d.close();$('#jA').onclick=()=>editer({date:s});
+ if(!d.open)d.showModal()}
+function editer(e){const d=dlg(),neuf=!e.id;AG.jour=null;
+ let type=e.type||AG.type,cours=e.cours??AG.coursPris;
+ d.innerHTML=`<form class="fm" id="fm"><div class="fm-h"><b>${neuf?'Ajouter':'Modifier'}</b><button type="button" class="x" data-close>×</button></div>
+  <input id="fT" class="in" placeholder="Quoi ? ex : exercices chapitre 3" maxlength="120" required autocomplete="off" value="${esc(e.titre||'')}">
+  <div class="lbl">Type</div><div class="seg">${Object.entries(TYPES).map(([k,[i,n]])=>`<button type="button" data-ty="${k}">${i} ${n}</button>`).join('')}</div>
+  <div class="lbl">Cours</div><div class="chips">${['',...AG.cours].map(c=>`<button type="button" data-co="${esc(c)}" style="--c:${couleur(c)}">${c?esc(c):'Aucun'}</button>`).join('')}</div>
+  <div class="lbl">Pour le</div><div class="dt"><input type="date" id="fD" class="in" required value="${esc(e.date||aujourdhui())}">
+   <button type="button" class="b g" data-dd="1">Demain</button><button type="button" class="b g" data-dd="7">Dans 1 semaine</button></div>
+  <div class="fm-a">${neuf?'':'<button type="button" class="b g del" id="fX">🗑 Supprimer</button>'}<span class="sp"></span><button class="b" type="submit">${neuf?'Ajouter':'Enregistrer'}</button></div></form>`;
+ const maj=()=>{d.querySelectorAll('[data-ty]').forEach(b=>b.classList.toggle('on',b.dataset.ty===type));d.querySelectorAll('[data-co]').forEach(b=>b.classList.toggle('on',b.dataset.co===cours))};
+ d.querySelectorAll('[data-ty]').forEach(b=>b.onclick=()=>{type=b.dataset.ty;maj()});
+ d.querySelectorAll('[data-co]').forEach(b=>b.onclick=()=>{cours=b.dataset.co;maj()});
+ d.querySelectorAll('[data-dd]').forEach(b=>b.onclick=()=>$('#fD').value=plusJours(+b.dataset.dd));
+ d.querySelector('[data-close]').onclick=()=>d.close();maj();
+ if(!neuf)$('#fX').onclick=()=>{const i=AG.liste.indexOf(e);AG.liste.splice(i,1);d.close();majAgenda();toast('« '+e.titre+' » supprimé',()=>{AG.liste.splice(i,0,e);majAgenda()})};
+ $('#fm').onsubmit=ev=>{ev.preventDefault();const titre=$('#fT').value.trim(),date=$('#fD').value;if(!titre||!date)return;
+  AG.type=type;AG.coursPris=cours;
+  if(neuf)AG.liste.push({id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),titre,date,type,cours,fait:false});
+  else Object.assign(e,{titre,date,type,cours});
+  d.close();
+  if(date.slice(0,7)!==iso(AG.mois||new Date()).slice(0,7))AG.mois=new Date(versDate(date).getFullYear(),versDate(date).getMonth(),1);
+  majAgenda();if(neuf)toast('Ajouté pour '+dateLongue(date))};
+ if(!d.open)d.showModal();$('#fT').focus()}
+
+// outils affichés dans la page de chaque cours (site : url vide = pas encore donné)
+const OUTILS={java:['code','fichiers','terminal'],web:['code','fichiers','terminal'],
+ c:['code','fichiers','pseudoide',['site','Site de l\'école',''],'terminal'],methode:['pseudoide','fichiers','code','terminal'],
+ os:['code','terminal','fichiers'],reseau:['terminal','fichiers'],architecture:['fichiers','terminal'],math:['fichiers','terminal'],
+ economie:['fichiers',['site','Site web',''],'terminal'],anglais:['fichiers',['site','Site web',''],'terminal']};
+function caseOutil(o,nom){const e=encodeURIComponent(nom);
+ if(Array.isArray(o))return o[2]?`<a class="case big" target="_blank" rel="noopener" href="${esc(o[2])}">🌐 ${esc(o[1])}</a>`
+  :`<div class="case big" style="opacity:.4">🌐 ${esc(o[1])}<div class="mut">lien à ajouter</div></div>`;
+ return {code:`<a class="case big" target="_blank" href="${CODE}/?folder=/workspace/hers/${e}">💻 Code</a>`,
+  fichiers:`<a class="case big" target="_blank" href="${CLOUD}/apps/files/?dir=/Workspace/hers/${e}">☁️ Fichiers</a>`,
+  terminal:`<a class="case big" target="_blank" href="${TERM}/?arg=${e}">⌨️ Terminal</a>`,
+  pseudoide:`<a class="case big" target="_blank" href="${IDE}/?dossier=hers/${e}">🧩 pseudoIDE</a>`}[o]||''}
+
+async function cours(nom){$('#fil').textContent='/ Hers / '+nom;
+ const outils=OUTILS[nom]||['fichiers','terminal'],url='/api/liens?cours='+encodeURIComponent(nom),liens=await api(url);
+ app.innerHTML=`<h1>📁 ${esc(nom)}</h1><p><a class="b g" style="text-decoration:none" href="#/hers">← Retour aux cours</a></p><div class="gris">${liensHtml(Array.isArray(liens)?liens:[])}<hr class="sep" style="margin-top:4px"><div class="grid">${outils.map(o=>caseOutil(o,nom)).join('')}</div></div>`;
+ brancherLiens(Array.isArray(liens)?liens:[],url,()=>cours(nom))}
+
+function route(){const h=location.hash.slice(1)||'/';
+ const surHers=h==='/hers'||h.startsWith('/hers/');$('#lcode').hidden=$('#lcloud').hidden=surHers;
+ if(h==='/')accueil();else if(h==='/build')build();else if(h==='/hers')hers();else if(h.startsWith('/hers/'))cours(decodeURIComponent(h.slice(6)));
+ else if(h.startsWith('/projet/'))projet(decodeURIComponent(h.slice(8)));else accueil()}
+addEventListener('hashchange',route);route();
+</script></body></html>
